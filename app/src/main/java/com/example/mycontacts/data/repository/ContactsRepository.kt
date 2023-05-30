@@ -17,4 +17,8 @@ class ContactsRepository @Inject constructor(private val database: AppDatabase) 
         return allContacts
     }
 
+    suspend fun insertContact(contact: Contact) {
+        database.contactDao()?.insertContact(contact)
+    }
+
 }
