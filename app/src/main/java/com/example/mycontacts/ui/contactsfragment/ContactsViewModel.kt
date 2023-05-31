@@ -3,20 +3,24 @@ package com.example.mycontacts.ui.contactsfragment
 import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.provider.ContactsContract
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mycontacts.data.model.Contact
 
 class ContactsViewModel : ViewModel() {
 
+    val contactsList = MutableLiveData<List<Contact>?>()
+
+
     @SuppressLint("Range")
-    fun getContacts(contentResolver: ContentResolver): List<Contact> {
+    fun getContacts(contentResolver: ContentResolver) {
         val contacts = mutableListOf<Contact>()
         val cursor = contentResolver.query(
             ContactsContract.Contacts.CONTENT_URI,
             null,
             null,
             null,
-            null
+            "DISPLAY_NAME ASC"
         )
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -45,7 +49,7 @@ class ContactsViewModel : ViewModel() {
             } while (cursor.moveToNext())
             cursor.close()
         }
-        return contacts
+        contactsList.value = contacts
     }
 
 }

@@ -27,7 +27,11 @@ class ContactsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requestPermission.launch(Manifest.permission.READ_CONTACTS)
-
+        val contactsAdapter = ContactsAdapter()
+        binding.contactsRecyclerView.adapter = contactsAdapter
+        contactsViewModel.contactsList.observe(viewLifecycleOwner) {
+            contactsAdapter.submitList(it)
+        }
     }
 
     private val requestPermission =
