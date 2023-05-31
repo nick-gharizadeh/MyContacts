@@ -38,11 +38,9 @@ class ContactsViewModel : ViewModel() {
                         null
                     )
                     if (phoneCursor != null && phoneCursor.moveToFirst()) {
-                        do {
                             val phoneNumber =
                                 phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
                             contacts.add(Contact(id.toInt(), name, phoneNumber))
-                        } while (phoneCursor.moveToNext())
                         phoneCursor.close()
                     }
                 }
