@@ -77,15 +77,25 @@ class ContactsViewModel @Inject constructor(
         }
     }
 
+    fun deleteAllContacts() {
+        viewModelScope.launch {
+            contactsRepository.deleteAllContacts()
+        }
+    }
+
 
     fun getChangeStateOfContacts(): Boolean {
         return sharedPreferences.getBoolean("DID_CONTACTS_CHANGE", true)
     }
 
-    override fun onCleared() {
+    fun setChangeStateOfContacts(didContactsChange: Boolean) {
         val editor = sharedPreferences.edit()
-        editor.putBoolean("DID_CONTACTS_CHANGE", false)
+        editor.putBoolean("DID_CONTACTS_CHANGE", didContactsChange)
         editor.apply()
         super.onCleared()
+    }
+
+    override fun onCleared() {
+        setChangeStateOfContacts(false)
     }
 }

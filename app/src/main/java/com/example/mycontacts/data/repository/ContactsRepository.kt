@@ -21,4 +21,7 @@ class ContactsRepository @Inject constructor(private val database: AppDatabase) 
         database.contactDao()?.insertContact(contact)
     }
 
+    suspend fun deleteAllContacts() {
+        database.contactDao()?.deleteAll()
+    }
 }

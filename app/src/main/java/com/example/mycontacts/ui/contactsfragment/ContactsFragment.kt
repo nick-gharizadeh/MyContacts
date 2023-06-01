@@ -55,8 +55,10 @@ class ContactsFragment : Fragment() {
                     )
                 )
                 if (contactsViewModel.getChangeStateOfContacts()) {
+                    contactsViewModel.deleteAllContacts()
                     val contacts = contactsViewModel.getContacts(requireContext().contentResolver)
                     contactsViewModel.insertContacts(contacts)
+                    contactsViewModel.setChangeStateOfContacts(false)
                 }
             } else {
                 Toast.makeText(
