@@ -79,7 +79,7 @@ class ContactsViewModel @Inject constructor(
 
 
     fun getChangeStateOfContacts(): Boolean {
-        return sharedPreferences.getBoolean("DID_CONTACTS_CHANGE", false)
+        return sharedPreferences.getBoolean("DID_CONTACTS_CHANGE", true)
     }
 
     override fun onCleared() {

@@ -39,12 +39,6 @@ class ContactsFragment : Fragment() {
         }
 
 
-        Toast.makeText(
-            requireContext(),
-            "${contactsViewModel.getChangeStateOfContacts()}",
-            Toast.LENGTH_SHORT
-        ).show()
-
     }
 
     private val requestPermission =
@@ -56,8 +50,10 @@ class ContactsFragment : Fragment() {
                         ContactObserverService::class.java
                     )
                 )
-                val contacts = contactsViewModel.getContacts(requireContext().contentResolver)
-                contactsViewModel.insertContacts(contacts)
+                if (contactsViewModel.getChangeStateOfContacts()) {
+                    val contacts = contactsViewModel.getContacts(requireContext().contentResolver)
+                    contactsViewModel.insertContacts(contacts)
+                }
             } else {
                 Toast.makeText(
                     requireContext(),
