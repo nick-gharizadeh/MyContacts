@@ -19,8 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
-    val contactsRepository: ContactsRepository,
-    val applicationContext: Application
+    private val contactsRepository: ContactsRepository,
+    private val applicationContext: Application
 ) : AndroidViewModel(applicationContext) {
 
     var contactsList: LiveData<List<Contact?>?>?
@@ -79,7 +79,7 @@ class ContactsViewModel @Inject constructor(
         }
     }
 
-    fun insertContacts(contacts: List<Contact>) {
+    private fun insertContacts(contacts: List<Contact>) {
         viewModelScope.launch {
             for (contact in contacts) {
                 contactsRepository.insertContact(contact)
@@ -87,21 +87,21 @@ class ContactsViewModel @Inject constructor(
         }
     }
 
-    fun deleteAllContacts() {
+    private fun deleteAllContacts() {
         viewModelScope.launch {
             contactsRepository.deleteAllContacts()
         }
     }
 
 
-    fun getChangeStateOfContacts(): String? {
+    private fun getChangeStateOfContacts(): String? {
         return sharedPreferences.getString(
             "CONTACTS_CHANGE_STATE",
             Utils.ContactsChangeState.CONTACTS_HAVE_CHANGED.state
         )
     }
 
-    fun setChangeStateOfContacts(state: String) {
+    private fun setChangeStateOfContacts(state: String) {
         val editor = sharedPreferences.edit()
         editor.putString("CONTACTS_CHANGE_STATE", state)
         editor.apply()

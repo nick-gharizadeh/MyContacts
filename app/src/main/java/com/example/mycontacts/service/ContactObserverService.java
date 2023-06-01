@@ -13,7 +13,6 @@ import com.example.mycontacts.Utils;
 import javax.annotation.Nullable;
 
 public class ContactObserverService extends Service {
-    private static final String TAG = "ContactOberverService";
 
 
     @Nullable

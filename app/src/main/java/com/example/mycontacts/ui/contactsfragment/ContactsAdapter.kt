@@ -11,7 +11,6 @@ import com.example.mycontacts.R
 import com.example.mycontacts.data.model.Contact
 
 typealias ClickHandler = (Contact) -> Unit
-
 class ContactsAdapter(private var clickHandler: ClickHandler) :
     ListAdapter<Contact, ContactsAdapter.ViewHolder>(ContactDiffCallback) {
 
