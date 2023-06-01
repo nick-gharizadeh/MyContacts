@@ -1,6 +1,8 @@
 package com.example.mycontacts.ui.contactsfragment
 
 import android.Manifest
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,13 +34,17 @@ class ContactsFragment : Fragment() {
         contactsViewModel.contactsList.observe(viewLifecycleOwner) {
             contactsAdapter.submitList(it)
         }
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("CONTACTS_CHANGE", Context.MODE_PRIVATE);
+        val didContactsChange = sharedPreferences.getBoolean("DID_CONTACTS_CHANGE", false);
+        Toast.makeText(requireContext(), "$didContactsChange", Toast.LENGTH_SHORT).show()
+
     }
 
     private val requestPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
                 val contacts = contactsViewModel.getContacts(requireContext().contentResolver)
-                Toast.makeText(requireContext(), "$contacts", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -48,4 +54,13 @@ class ContactsFragment : Fragment() {
             }
         }
 
+    override fun onDestroy() {
+        val sharedPreferences: SharedPreferences =
+            requireActivity().getSharedPreferences("CONTACTS_CHANGE", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("DID_CONTACTS_CHANGE", false)
+        editor.apply()
+        super.onDestroy()
+
+    }
 }
