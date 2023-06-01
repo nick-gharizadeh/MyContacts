@@ -1,19 +1,37 @@
 package com.example.mycontacts.ui.contactsfragment
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.ContentResolver
+import android.content.Context
+import android.content.SharedPreferences
 import android.provider.ContactsContract
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.example.mycontacts.data.model.Contact
+import com.example.mycontacts.data.repository.ContactsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ContactsViewModel : ViewModel() {
 
-    val contactsList = MutableLiveData<List<Contact>?>()
+@HiltViewModel
+class ContactsViewModel @Inject constructor(
+    val contactsRepository: ContactsRepository,
+    application: Application
+) : AndroidViewModel(application) {
 
+    var contactsList: LiveData<List<Contact?>?>?
+    private val sharedPreferences: SharedPreferences =
+        application.getSharedPreferences("CONTACTS_CHANGE", Context.MODE_PRIVATE)
+
+    init {
+        contactsList = contactsRepository.getAllContacts()
+    }
 
     @SuppressLint("Range")
-    fun getContacts(contentResolver: ContentResolver) {
+    fun getContacts(contentResolver: ContentResolver): List<Contact> {
         val contacts = mutableListOf<Contact>()
         val cursor = contentResolver.query(
             ContactsContract.Contacts.CONTENT_URI,
@@ -38,16 +56,36 @@ class ContactsViewModel : ViewModel() {
                         null
                     )
                     if (phoneCursor != null && phoneCursor.moveToFirst()) {
-                            val phoneNumber =
-                                phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                            contacts.add(Contact(id.toInt(), name, phoneNumber))
+                        val phoneNumber =
+                            phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                        contacts.add(Contact(id.toInt(), name, phoneNumber))
                         phoneCursor.close()
                     }
                 }
             } while (cursor.moveToNext())
             cursor.close()
         }
-        contactsList.value = contacts
+        return contacts
     }
 
+
+    fun insertContacts(contacts: List<Contact>) {
+        viewModelScope.launch {
+            for (contact in contacts) {
+                contactsRepository.insertContact(contact)
+            }
+        }
+    }
+
+
+    fun getChangeStateOfContacts(): Boolean {
+        return sharedPreferences.getBoolean("DID_CONTACTS_CHANGE", false)
+    }
+
+    override fun onCleared() {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("DID_CONTACTS_CHANGE", false)
+        editor.apply()
+        super.onCleared()
+    }
 }

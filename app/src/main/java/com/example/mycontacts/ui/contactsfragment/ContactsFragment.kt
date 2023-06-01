@@ -1,8 +1,7 @@
 package com.example.mycontacts.ui.contactsfragment
 
 import android.Manifest
-import android.content.Context
-import android.content.SharedPreferences
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +11,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.mycontacts.databinding.FragmentContactsBinding
+import com.example.mycontacts.service.ContactObserverService
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class ContactsFragment : Fragment() {
     private lateinit var binding: FragmentContactsBinding
     private val contactsViewModel: ContactsViewModel by viewModels()
@@ -31,20 +32,32 @@ class ContactsFragment : Fragment() {
         requestPermission.launch(Manifest.permission.READ_CONTACTS)
         val contactsAdapter = ContactsAdapter()
         binding.contactsRecyclerView.adapter = contactsAdapter
-        contactsViewModel.contactsList.observe(viewLifecycleOwner) {
-            contactsAdapter.submitList(it)
+
+        contactsViewModel.contactsList?.observe(viewLifecycleOwner) {
+            if (it != null)
+                contactsAdapter.submitList(it)
         }
-        val sharedPreferences =
-            requireActivity().getSharedPreferences("CONTACTS_CHANGE", Context.MODE_PRIVATE);
-        val didContactsChange = sharedPreferences.getBoolean("DID_CONTACTS_CHANGE", false);
-        Toast.makeText(requireContext(), "$didContactsChange", Toast.LENGTH_SHORT).show()
+
+
+        Toast.makeText(
+            requireContext(),
+            "${contactsViewModel.getChangeStateOfContacts()}",
+            Toast.LENGTH_SHORT
+        ).show()
 
     }
 
     private val requestPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
+                requireActivity().startService(
+                    Intent(
+                        requireActivity(),
+                        ContactObserverService::class.java
+                    )
+                )
                 val contacts = contactsViewModel.getContacts(requireContext().contentResolver)
+                contactsViewModel.insertContacts(contacts)
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -54,13 +67,5 @@ class ContactsFragment : Fragment() {
             }
         }
 
-    override fun onDestroy() {
-        val sharedPreferences: SharedPreferences =
-            requireActivity().getSharedPreferences("CONTACTS_CHANGE", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("DID_CONTACTS_CHANGE", false)
-        editor.apply()
-        super.onDestroy()
 
-    }
 }
