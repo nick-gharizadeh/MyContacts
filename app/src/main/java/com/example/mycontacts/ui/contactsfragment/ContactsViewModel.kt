@@ -20,12 +20,12 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
     val contactsRepository: ContactsRepository,
-    application: Application
-) : AndroidViewModel(application) {
+    val applicationContext: Application
+) : AndroidViewModel(applicationContext) {
 
     var contactsList: LiveData<List<Contact?>?>?
     private val sharedPreferences: SharedPreferences =
-        application.getSharedPreferences("CONTACTS_CHANGE", Context.MODE_PRIVATE)
+        applicationContext.getSharedPreferences("CONTACTS_CHANGE", Context.MODE_PRIVATE)
 
     init {
         contactsList = contactsRepository.getAllContacts()
@@ -70,6 +70,15 @@ class ContactsViewModel @Inject constructor(
     }
 
 
+    fun fetchContacts() {
+        if (getChangeStateOfContacts() == Utils.ContactsChangeState.CONTACTS_HAVE_CHANGED.state) {
+            deleteAllContacts()
+            val contacts = getContacts(applicationContext.contentResolver)
+            insertContacts(contacts)
+            setChangeStateOfContacts(Utils.ContactsChangeState.CONTACTS_HAVE_NOT_CHANGED.state)
+        }
+    }
+
     fun insertContacts(contacts: List<Contact>) {
         viewModelScope.launch {
             for (contact in contacts) {
@@ -86,7 +95,10 @@ class ContactsViewModel @Inject constructor(
 
 
     fun getChangeStateOfContacts(): String? {
-        return sharedPreferences.getString("CONTACTS_CHANGE_STATE",Utils.ContactsChangeState.CONTACTS_HAVE_CHANGED.state)
+        return sharedPreferences.getString(
+            "CONTACTS_CHANGE_STATE",
+            Utils.ContactsChangeState.CONTACTS_HAVE_CHANGED.state
+        )
     }
 
     fun setChangeStateOfContacts(state: String) {
