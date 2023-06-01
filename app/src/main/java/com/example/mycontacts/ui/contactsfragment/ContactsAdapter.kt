@@ -10,8 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mycontacts.R
 import com.example.mycontacts.data.model.Contact
 
+typealias ClickHandler = (Contact) -> Unit
 
-class ContactsAdapter :
+class ContactsAdapter(private var clickHandler: ClickHandler) :
     ListAdapter<Contact, ContactsAdapter.ViewHolder>(ContactDiffCallback) {
 
     object ContactDiffCallback : DiffUtil.ItemCallback<Contact>() {
@@ -39,7 +40,9 @@ class ContactsAdapter :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val contact = getItem(position)
         holder.textViewContactName.text = contact.fullName
-
+        holder.itemView.setOnClickListener {
+            clickHandler.invoke(contact)
+        }
     }
 }
 

@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.example.mycontacts.data.model.Contact
 import com.example.mycontacts.databinding.FragmentContactsBinding
 import com.example.mycontacts.service.ContactObserverService
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +32,9 @@ class ContactsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requestPermission.launch(Manifest.permission.READ_CONTACTS)
-        val contactsAdapter = ContactsAdapter()
+        val contactsAdapter = ContactsAdapter {
+            goToContactDetailFragment(it)
+        }
         binding.contactsRecyclerView.adapter = contactsAdapter
 
         contactsViewModel.contactsList?.observe(viewLifecycleOwner) {
@@ -62,6 +66,13 @@ class ContactsFragment : Fragment() {
                 ).show()
             }
         }
+
+    private fun goToContactDetailFragment(contact: Contact) {
+        val action =
+            ContactsFragmentDirections.actionContactsFragmentToContactDetailFragment(contact)
+        findNavController().navigate(action)
+
+    }
 
 
 }

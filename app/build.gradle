@@ -3,11 +3,11 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'androidx.navigation.safeargs'
 
 }
 
 android {
-    namespace 'com.example.mycontacts'
     compileSdk 32
 
     defaultConfig {

@@ -9,5 +9,18 @@
         android:id="@+id/contactsFragment"
         android:name="com.example.mycontacts.ui.contactsfragment.ContactsFragment"
         android:label="fragment_contacts"
-        tools:layout="@layout/fragment_contacts" />
+        tools:layout="@layout/fragment_contacts" >
+        <action
+            android:id="@+id/action_contactsFragment_to_contactDetailFragment"
+            app:destination="@id/contactDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactDetailFragment"
+        android:name="com.example.mycontacts.ui.contactdetailfragment.ContactDetailFragment"
+        android:label="fragment_contact_detail"
+        tools:layout="@layout/fragment_contact_detail" >
+        <argument
+            android:name="contactSafeArg"
+            app:argType="com.example.mycontacts.data.model.Contact" />
+    </fragment>
 </navigation>
