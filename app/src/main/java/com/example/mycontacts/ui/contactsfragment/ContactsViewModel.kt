@@ -9,6 +9,7 @@ import android.provider.ContactsContract
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import com.example.mycontacts.Utils
 import com.example.mycontacts.data.model.Contact
 import com.example.mycontacts.data.repository.ContactsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -84,18 +85,18 @@ class ContactsViewModel @Inject constructor(
     }
 
 
-    fun getChangeStateOfContacts(): Boolean {
-        return sharedPreferences.getBoolean("DID_CONTACTS_CHANGE", true)
+    fun getChangeStateOfContacts(): String? {
+        return sharedPreferences.getString("CONTACTS_CHANGE_STATE",Utils.ContactsChangeState.CONTACTS_HAVE_CHANGED.state)
     }
 
-    fun setChangeStateOfContacts(didContactsChange: Boolean) {
+    fun setChangeStateOfContacts(state: String) {
         val editor = sharedPreferences.edit()
-        editor.putBoolean("DID_CONTACTS_CHANGE", didContactsChange)
+        editor.putString("CONTACTS_CHANGE_STATE", state)
         editor.apply()
         super.onCleared()
     }
 
     override fun onCleared() {
-        setChangeStateOfContacts(false)
+        setChangeStateOfContacts(Utils.ContactsChangeState.CONTACTS_HAVE_NOT_CHANGED.state)
     }
 }

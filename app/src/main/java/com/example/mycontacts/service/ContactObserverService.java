@@ -8,6 +8,8 @@ import android.database.ContentObserver;
 import android.os.IBinder;
 import android.provider.ContactsContract;
 
+import com.example.mycontacts.Utils;
+
 import javax.annotation.Nullable;
 
 public class ContactObserverService extends Service {
@@ -30,7 +32,7 @@ public class ContactObserverService extends Service {
             super.onChange(selfChange);
             SharedPreferences sharedPreferences = getSharedPreferences("CONTACTS_CHANGE", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("DID_CONTACTS_CHANGE", true);
+            editor.putString("CONTACTS_CHANGE_STATE", Utils.ContactsChangeState.CONTACTS_HAVE_CHANGED.getState());
             editor.apply();
 
         }

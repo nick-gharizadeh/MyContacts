@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.example.mycontacts.Utils
 import com.example.mycontacts.data.model.Contact
 import com.example.mycontacts.databinding.FragmentContactsBinding
 import com.example.mycontacts.service.ContactObserverService
@@ -54,11 +55,11 @@ class ContactsFragment : Fragment() {
                         ContactObserverService::class.java
                     )
                 )
-                if (contactsViewModel.getChangeStateOfContacts()) {
+                if (contactsViewModel.getChangeStateOfContacts() == Utils.ContactsChangeState.CONTACTS_HAVE_CHANGED.state) {
                     contactsViewModel.deleteAllContacts()
                     val contacts = contactsViewModel.getContacts(requireContext().contentResolver)
                     contactsViewModel.insertContacts(contacts)
-                    contactsViewModel.setChangeStateOfContacts(false)
+                    contactsViewModel.setChangeStateOfContacts(Utils.ContactsChangeState.CONTACTS_HAVE_NOT_CHANGED.state)
                 }
             } else {
                 Toast.makeText(
