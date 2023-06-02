@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mycontacts.CircleTextView
 import com.example.mycontacts.R
 import com.example.mycontacts.data.model.Contact
 
@@ -27,6 +28,8 @@ class ContactsAdapter(private var clickHandler: ClickHandler) :
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textViewContactName: TextView = view.findViewById(R.id.textView_contact_name)
+        val myCircleTextView = view.findViewById<CircleTextView>(R.id.my_circle_text_view)
+
 
     }
 
@@ -39,6 +42,7 @@ class ContactsAdapter(private var clickHandler: ClickHandler) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val contact = getItem(position)
         holder.textViewContactName.text = contact.fullName
+        holder.myCircleTextView.setText(contact.fullName[0])
         holder.itemView.setOnClickListener {
             clickHandler.invoke(contact)
         }

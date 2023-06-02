@@ -28,5 +28,6 @@ class ContactDetailFragment : Fragment() {
         val contactSafeArg = args.contactSafeArg
         binding.textViewContactNameDetail.text = contactSafeArg.fullName
         binding.textViewPhoneNumber.text = contactSafeArg.phoneNumber
+        binding.myCircleTextView.setText(contactSafeArg.fullName[0])
     }
 }
